@@ -5,77 +5,67 @@ namespace StudentManagement
 {
     public class StudentManagementSystem
     {
-        School school;
-        public StudentManagementSystem(School school)
+        School school = new School();
+        public StudentManagementSystem()
         {
-            this.school = school;
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            GetSchoolName();
         }
 
         public void GetSchoolName()
         {
             Console.WriteLine("Enter School Name :");
-            string name = Console.ReadLine();
-            school.Name = name;
-            DisplayMenuOptions();
+            school.Name = Console.ReadLine();
+            MenuOptions();
         }
 
-        public void DisplayMenuOptions()
+        public void MenuOptions()
         {
             Console.Clear();
-            Console.WriteLine("Welcome to "+ school.Name + " Student information management");
-            Console.WriteLine("----------------------------------------------------------------\n");
-            Console.WriteLine("1. Add Student.");
-            Console.WriteLine("2. Add Marks For Student.");
-            Console.WriteLine("3. Show Student Progress Card.\n");
-            Console.WriteLine("Please Provide valid input from menu options : ");
+            Console.WriteLine("" +
+                "Welcome to " + school.Name + " Student information management\n" +
+                "----------------------------------------------------------------\n\n" +
+                "1. Add Student.\n" +
+                "2. Add Marks For Student.\n" +
+                "3. Show Student Progress Card.\n\n" +
+                "Please Provide valid input from menu options : ");
             int res = Convert.ToInt32(Console.ReadLine());
             switch (res)
             {
                 case 1:
-                    AddAStudent();
+                    AddStudent();
                     break;
                 case 2:
-                    bool result = AddStudentMarks();
-                    if (result)
-                    {
-                        Console.WriteLine("Student Marks Are Added Successfully\n");
-                        Console.WriteLine("Press Any Key to continue");
-                        Console.ReadLine();
-                        DisplayMenuOptions();
-                    }
-                    else
-                    {
-                        Console.WriteLine("Student does not exists\n");
-                        Console.WriteLine("Press Any Key to continue");
-                        Console.ReadLine();
-                        DisplayMenuOptions();
-                    }
+                    bool isSuccess = AddStudentMarks();
+                    Console.WriteLine(isSuccess ? "Student Marks Are Added Successfully\n" : "Student does not exists\n");
                     break;
                 case 3:
-                    ShowProgressCard();
+                    ProgressCard();
                     break;
                 default:
                     Console.WriteLine("Not a valid option!!");
                     break;
             }
+            Console.WriteLine("Press Any Key to continue");
+            Console.ReadLine();
+            MenuOptions();
 
         }
 
-        public void AddAStudent()
+        public void AddStudent()
         {
             Console.Clear();
-            Console.WriteLine("Enter Student Roll Number :");
-            int rollNo = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Enter Student Name :");
-            string name = Console.ReadLine();
             Student student = new Student();
-            student.Name = name;
-            student.RollNo = rollNo;
+            Console.WriteLine("Enter Student Roll Number :");
+            student.RollNo = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Enter Student Name :");
+            student.Name = Console.ReadLine();
             school.Students.Add(student);
             Console.WriteLine("Student details are added successfully.\n");
-            Console.WriteLine("Press Any Key to continue");
-            Console.ReadLine();
-            DisplayMenuOptions();
         }
 
         public bool AddStudentMarks()
@@ -83,37 +73,30 @@ namespace StudentManagement
             Console.Clear();
             Console.WriteLine("Enter Student Roll Number :");
             int rollNo = Convert.ToInt32(Console.ReadLine());
-            bool flag = false;
-            foreach(var student in school.Students)
+            try
             {
-                if(student.RollNo == rollNo)
-                {
-                    flag = true;
-                    Console.WriteLine("Enter Marks Scored in English :");
-                    int english = Convert.ToInt32(Console.ReadLine());
-                    Subject eng = new Subject();
-                    eng.Marks = english;
-                    eng.Name = "English";
-                    student.subjects.Add(eng);
-                    Console.WriteLine("Enter Marks Scored in Maths :");
-                    int maths = Convert.ToInt32(Console.ReadLine());
-                    Subject math = new Subject();
-                    math.Marks = maths;
-                    math.Name = "Maths";
-                    student.subjects.Add(math);
-                    Console.WriteLine("Enter Marks Scored in Science :");
-                    int science = Convert.ToInt32(Console.ReadLine());
-                    Subject scs = new Subject();
-                    scs.Marks = science;
-                    scs.Name = "Science";
-                    student.subjects.Add(scs);
-                    break;
-                }
+                var student = school.Students.Find(std => std.RollNo == rollNo);
+                if (student == null) return false;
+                student.Subjects.Add(GetSubjectMarks("English"));
+                student.Subjects.Add(GetSubjectMarks("Maths"));
+                student.Subjects.Add(GetSubjectMarks("Science"));
+                return true;
             }
-            return flag;
+            catch
+            {
+                return false;
+            }
         }
 
-        public void ShowProgressCard()
+        public Subject GetSubjectMarks(string subjectName) {
+            Subject subject = new Subject();
+            Console.WriteLine("Enter Marks Scored in " + subjectName + " : ");
+            subject.Marks = Convert.ToInt32(Console.ReadLine());
+            subject.Name = subjectName;
+            return subject;
+        }
+
+        public void ProgressCard()
         {
             Console.Clear();
             Console.WriteLine("Enter Student Roll Number :");
@@ -130,7 +113,7 @@ namespace StudentManagement
                     Console.WriteLine("----------------------------------");
                     int marks = 0;
                     int total = 0;
-                    foreach(var sub in student.subjects)
+                    foreach(var sub in student.Subjects)
                     {
                         Console.WriteLine(sub.Name + " : " + sub.Marks.ToString());
                         marks += sub.Marks;
@@ -142,14 +125,14 @@ namespace StudentManagement
                     Console.WriteLine("---------------------------------- \n");
                     Console.WriteLine("Press Any Key to continue");
                     Console.ReadLine();
-                    DisplayMenuOptions();
+                    MenuOptions();
                     break;
                 }
             }
             if (!flag)
             {
                 Console.WriteLine("Student does not exists");
-                DisplayMenuOptions();
+                MenuOptions();
             }
         }
     }

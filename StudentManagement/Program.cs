@@ -7,10 +7,7 @@ namespace StudentManagement
     {
         static void Main(string[] args)
         {
-
-            School school = new School();
-            StudentManagementSystem studentManagementSystem = new StudentManagementSystem(school);
-            studentManagementSystem.GetSchoolName();
+           new StudentManagementSystem();
         }
     }
 }

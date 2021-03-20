@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace StudentManagement.Models
 {
     public class Subject

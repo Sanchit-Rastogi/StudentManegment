@@ -7,11 +7,11 @@ namespace StudentManagement.Models
     {
         public string Name { get; set; }
         public int RollNo { get; set; }
-        public List<Subject> subjects { get; set; }
+        public List<Subject> Subjects { get; set; }
 
         public Student()
         {
-            subjects = new List<Subject>();
+            Subjects = new List<Subject>();
         }
     }
 }
